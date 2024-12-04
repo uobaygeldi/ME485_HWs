@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import math
 from time import process_time
-# testing
 import numpy as np
 import re
 
@@ -92,8 +91,11 @@ class GradElements(BaseElements,  gradFluidElements):
         vol                 = self._vol
         xcs                 = self.xc # Cell center point (x,y)
         # print(np.shape(xcs)) # (elem id, dimension)
+        # print(np.shape(vol))
         # self.grad = grad = np.zeros((self.ndims, self.nvars, self.neles))
         exactGrad = np.zeros((self.ndims, self.nvars, self.neles))
+        err = np.zeros((self.ndims, self.nvars, self.neles))
+        sums = np.zeros((self.ndims, self.nvars))
         for idx in range(neles):
             x = np.zeros(ndims)
             for i in range(nvars):
@@ -102,12 +104,15 @@ class GradElements(BaseElements,  gradFluidElements):
                 eqn = [x[0]/math.sqrt(x[0]*x[0]+x[1]*x[1]), x[1]/math.sqrt(x[0]*x[0] + x[1]*x[1])]
                 for j in range(ndims):
                     exactGrad[j, i, idx] = eqn[j]
+                    err[j, i, idx] = ((self.grad[j, i, idx] - exactGrad[j, i, idx])**2)*vol[idx]
 
-        diff = self.grad - exactGrad
+        for i in range(nvars):
+            for j in range(ndims):
+                sums[j, i] = np.sum(err[j, i])
 
-        resid = np.sqrt(np.sum(diff))
+        resid = np.sqrt(sums)
+
         return resid
-
 #-------------------------------------------------------------------------------#
     # Assign cell centers values to face centers
     def _make_compute_fpts(self):

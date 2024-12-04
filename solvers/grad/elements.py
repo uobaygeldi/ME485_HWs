@@ -101,7 +101,8 @@ class GradElements(BaseElements,  gradFluidElements):
             for i in range(nvars):
                 for j in range(ndims):
                     x[j] = xcs[idx][j]
-                eqn = [x[0]/math.sqrt(x[0]*x[0]+x[1]*x[1]), x[1]/math.sqrt(x[0]*x[0] + x[1]*x[1])]
+                eqn = [x[0]/math.sqrt(x[0]*x[0]+x[1]*x[1]), x[1]/math.sqrt(x[0]*x[0] + x[1]*x[1])] # sqrt(x^2 + y^2)
+                # eqn = [2*x[0],2*x[1]] # x^2 + y^2
                 for j in range(ndims):
                     exactGrad[j, i, idx] = eqn[j]
                     err[j, i, idx] = ((self.grad[j, i, idx] - exactGrad[j, i, idx])**2)*vol[idx]

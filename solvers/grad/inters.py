@@ -30,10 +30,10 @@ class GradIntInters(BaseIntInters):
                     ul = uf[lti][lfi, jdx, lei]
                     ur = uf[rti][rfi, jdx, rei]
 
-                    delu = ul - ur
+                    delu = ur - ul
 
-                    uf[lti][lfi, jdx, lei] = -delu
-                    uf[rti][rfi, jdx, rei] =  delu
+                    uf[lti][lfi, jdx, lei] =  delu
+                    uf[rti][rfi, jdx, rei] = -delu
 
         return self.be.make_loop(self.nfpts, compute_delu)
 
@@ -104,9 +104,9 @@ class GradBCInters(BaseBCInters):
                 ul = uf[lti][lfi, :, lei]
                 bc(ul, ur, nfi)
 
-                delu = ul - ur
+                delu = ur - ul
 
-                uf[lti][lfi, :, lei] = -delu
+                uf[lti][lfi, :, lei] = delu
 
         return self.be.make_loop(self.nfpts, compute_delu)
 

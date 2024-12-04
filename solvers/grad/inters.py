@@ -114,7 +114,6 @@ class GradBCInters(BaseBCInters):
         nvars = self.nvars
         lt, le, lf = self._lidx
         nf = self._vec_snorm
-
         bc = self.bc
         array = self.be.local_array()
 

@@ -101,11 +101,13 @@ class GradElements(BaseElements,  gradFluidElements):
             for i in range(nvars):
                 for j in range(ndims):
                     x[j] = xcs[idx][j]
-                eqn = [x[0]/math.sqrt(x[0]*x[0]+x[1]*x[1]), x[1]/math.sqrt(x[0]*x[0] + x[1]*x[1])] # sqrt(x^2 + y^2)
+                eqn = [x[0]/math.sqrt(x[0]*x[0]+x[1]*x[1]), x[1]/math.sqrt(
+                    x[0]*x[0] + x[1]*x[1])] # sqrt(x^2 + y^2)
                 # eqn = [2*x[0],2*x[1]] # x^2 + y^2
                 for j in range(ndims):
                     exactGrad[j, i, idx] = eqn[j]
-                    err[j, i, idx] = ((self.grad[j, i, idx] - exactGrad[j, i, idx])**2)*vol[idx]
+                    err[j, i, idx] = ((self.grad[j, i, idx] - exactGrad[j, i, idx]
+                                       )**2)*vol[idx]
 
         for i in range(nvars):
             for j in range(ndims):
@@ -144,7 +146,7 @@ class GradElements(BaseElements,  gradFluidElements):
                         for i in range(nface):
                             # fpts = np.empty((self.nface, self.nvars, self.neles))
                             sum += fpts[i, j, idx] * op[d, i, idx]
-                            # self.grad = grad = np.zeros((self.ndims, self.nvars, self.neles))
+                            #grad = np.zeros((self.ndims, self.nvars, self.neles))
 
                         grad[d, j, idx] = sum
 
@@ -169,7 +171,7 @@ class GradElements(BaseElements,  gradFluidElements):
                         sum = 0
                         for i in range(nface):
                             sum += fpts[i, j, idx]*snorm_mag[i,idx]*snorm_vec[d,i,idx]
-                            # self.grad = grad = np.zeros((self.ndims, self.nvars, self.neles))
+                            #grad = np.zeros((self.ndims, self.nvars, self.neles))
 
                         grad[d,j,idx] = (1/vol[idx])*sum
 
@@ -236,7 +238,8 @@ class GradElements(BaseElements,  gradFluidElements):
             w = (2 * dxfn / dxcn) ** 2 * snorm_mag / distance
 
             # Compute blending function (GLSQ)
-            ar = 2 * np.linalg.norm(self.dxf, axis=1).max(axis=0) * snorm_mag.max(axis=0) / vol
+            ar = 2 * np.linalg.norm(self.dxf, axis=1).max(
+                axis=0)*snorm_mag.max(axis=0) / vol
             beta = np.minimum(1, 2 / ar)
         else:
             raise ValueError("Invalid gradient method : ", self._grad_method)
@@ -253,7 +256,8 @@ class GradElements(BaseElements,  gradFluidElements):
         b = beta * dxc * w + 2 * (1 - beta) * 0.5 * snorm_vec * snorm_mag
 
         # Solve Ax=b
-        op = np.linalg.solve(np.rollaxis(A, axis=2), np.rollaxis(b, axis=2)).transpose(1, 2, 0)
+        op = np.linalg.solve(np.rollaxis(
+            A, axis=2), np.rollaxis(b, axis=2)).transpose(1, 2, 0)
 
         return op
 

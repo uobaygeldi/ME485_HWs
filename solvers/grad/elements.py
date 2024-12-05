@@ -95,7 +95,7 @@ class GradElements(BaseElements,  gradFluidElements):
         # self.grad = grad = np.zeros((self.ndims, self.nvars, self.neles))
         exactGrad = np.zeros((self.ndims, self.nvars, self.neles))
         err = np.zeros((self.ndims, self.nvars, self.neles))
-        sums = np.zeros((self.ndims, self.nvars))
+        # sums = np.zeros((self.ndims, self.nvars))
         for idx in range(neles):
             x = np.zeros(ndims)
             for i in range(nvars):
@@ -106,15 +106,10 @@ class GradElements(BaseElements,  gradFluidElements):
                 # eqn = [2*x[0],2*x[1]] # x^2 + y^2
                 for j in range(ndims):
                     exactGrad[j, i, idx] = eqn[j]
-                    err[j, i, idx] = ((self.grad[j, i, idx] - exactGrad[j, i, idx]
-                                       )**2)*vol[idx]
+                    err[j, i, idx] = (self.grad[j, i, idx] - exactGrad[j, i, idx]
+                                       )*vol[idx]
 
-        for i in range(nvars):
-            for j in range(ndims):
-                sums[j, i] = np.sum(err[j, i])
-
-        resid = np.sqrt(sums)
-
+        resid = np.linalg.norm(err, axis=2)
         return resid
 #-------------------------------------------------------------------------------#
     # Assign cell centers values to face centers

@@ -95,7 +95,6 @@ class GradElements(BaseElements,  gradFluidElements):
         # self.grad = grad = np.zeros((self.ndims, self.nvars, self.neles))
         exactGrad = np.zeros((self.ndims, self.nvars, self.neles))
         err = np.zeros((self.ndims, self.nvars, self.neles))
-        # sums = np.zeros((self.ndims, self.nvars))
         for idx in range(neles):
             x = np.zeros(ndims)
             for i in range(nvars):

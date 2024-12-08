@@ -81,10 +81,12 @@ gmsh.model.geo.mesh.setTransfiniteSurface(s2)
 gmsh.model.geo.mesh.setTransfiniteSurface(s3)
 gmsh.model.geo.mesh.setTransfiniteSurface(s4)
 
-gmsh.model.geo.mesh.setRecombine(2, s1)
-gmsh.model.geo.mesh.setRecombine(2, s2)
-gmsh.model.geo.mesh.setRecombine(2, s3)
-gmsh.model.geo.mesh.setRecombine(2, s4)
+c = 2
+
+gmsh.model.geo.mesh.setRecombine(c, s1)
+gmsh.model.geo.mesh.setRecombine(c, s2)
+gmsh.model.geo.mesh.setRecombine(c, s3)
+gmsh.model.geo.mesh.setRecombine(c, s4)
 
 gmsh.model.geo.synchronize()
 

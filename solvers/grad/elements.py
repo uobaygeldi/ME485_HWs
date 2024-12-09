@@ -103,7 +103,7 @@ class GradElements(BaseElements,  gradFluidElements):
                 eqn = [x[0]/math.sqrt(x[0]*x[0]+x[1]*x[1]), x[1]/math.sqrt(
                     x[0]*x[0] + x[1]*x[1])] # sqrt(x^2 + y^2)
                 #eqn = [2*x[0],2*x[1]] # x^2 + y^2
-                #eqn = [31*x[0], 31*x[1]] # x^32 + y^32
+                #eqn = [32*(x[0]**31), 32*(x[1]]**31) # x^32 + y^32
                 #eqn = [-math.sin(x[0]**2+x[1]**2)*2*x[0],
                 #       -math.sin(x[0]**2+x[1]**2)*2*x[1]]
                 for j in range(ndims):

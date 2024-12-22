@@ -112,20 +112,18 @@ class ParabolicIntInters(BaseIntInters):
         array = self.be.local_array()
 
         def grad_at(i_begin, i_end, gradf, *uf):
-            # print(lt)
             # Parse element views (fpts, grad)
             du    = uf[:nele]
             gradu = uf[nele:]
-
             # shape of gradf = (dim, var, elem)
             for idx in range(i_begin, i_end):
-                print(idx)
-                '''lt, le, lf = lt[idx], le[idx], lf[idx]
-                rt, re, rf = rt[idx], re[idx], rf[idx]'''
-                print(weight)
-                '''for j in range(nvars):
+                lti, lei, lfi = lt[idx], le[idx], lf[idx]
+                rti, rei, rfi = rt[idx], re[idx], rf[idx]
+                for j in range(nvars):
                     for i in range(ndims):
-'''
+                        # weight of right = 1 - weight of left
+                        gradf[i, j, idx] = weight[idx]*gradu[lti][i, j, lei] + (1 - weight[idx])*gradu[idx][i, j, rei]
+
         return self.be.make_loop(self.nfpts, grad_at)
 
 #-------------------------------------------------------------------------------#    
@@ -245,16 +243,19 @@ class ParabolicBCInters(BaseBCInters):
         array = self.be.local_array()
 
         def grad_at(i_begin, i_end, gradf, *uf):
+            '''print("BC")
             # Parse element views (fpts, grad)
             du = uf[:nele]
             gradu = uf[nele:]
 
-            #for idx in range(i_begin, i_end):
-               #*************************# 
-               # Complete function
-            
-
-               #*************************# 
+            for idx in range(i_begin, i_end):
+                print(du[idx])
+                print(gradu[idx])
+                lti, lei, lfi = lt[idx], le[idx], lf[idx]
+                print(lti)
+                for j in range(nvars):
+                    for i in range(ndims):
+'''
 
         return self.be.make_loop(self.nfpts, grad_at)
 

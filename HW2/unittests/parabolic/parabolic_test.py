@@ -6,12 +6,12 @@ sys.path.append("../../") # Adds higher directory to python modules path.
 from unittests.modules import *
 #----------------------------------------------------------------------------------#
 def convertVTU():
-	extension = '.pbrs'
-	for root, _, filenames in os.walk(os.getcwd()):
-	   for file in filenames:
-	      if extension is None or file.endswith(extension):
-	      	name = os.path.splitext(file)[0]
-	      	export_soln(meshoutfile, name+'.pbrs', name+'.vtu')
+    extension = '.pbrs'
+    for root, _, filenames in os.walk(os.getcwd()):
+       for file in filenames:
+          if extension is None or file.endswith(extension):
+            name = os.path.splitext(file)[0]
+            export_soln(meshoutfile, name+'.pbrs', name+'.vtu')
 #----------------------------------------------------------------------------------#
 # Give the name of the INI file
 inifile = "parabolic.ini"

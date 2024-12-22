@@ -103,44 +103,33 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
 
 #-------------------------------------------------------------------------------#
     def _make_compute_norm(self):
-        #*************************# 
-        # get required data here
-
-
-
-
-        #*************************# 
+        # Code taken directly from HW1
+        nvars, neles, ndims = self.nvars, self.neles, self.ndims
+        vol = self._vol
+        xcs = self.xc
         def run(upts):
-        #*************************# 
+        #*************************#
         # compute L2 norm in this function
         # upts is the solution field
 
 
 
 
-        #*************************# 
-
+        #*************************#
+            #norm = 31
             return norm
 
         return self.be.compile(run, outer=True)
 
 #-------------------------------------------------------------------------------#
     def _make_compute_fpts(self):
-        #*************************# 
-        # get required data here
-        #*************************# 
+        nvars, nface = self.nvars, self.nface
         def _compute_fpts(i_begin, i_end, upts, fpts):
-        #*************************# 
-        # Complete function
-        # upts: array holding cell center values
-        # fpts: array holding face values
-
-
-
-
-        #*************************# 
-            
-        
+            # Code taken directly from HW1
+            for idx in range(i_begin, i_end):
+                for j in range(nvars):
+                    for i in range(nface):
+                        fpts[i, j, idx] = upts[j, idx]
         return self.be.make_loop(self.neles, _compute_fpts)
 
 #-------------------------------------------------------------------------------#
@@ -149,15 +138,15 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
         # Gradient operator 
         op = self._prelsq
         def _cal_grad(i_begin, i_end, fpts, grad):
-        #*************************# 
-        # Complete function
-        # grad: array holding cell center gradient values
-        # fpts: array holding face values
+            # Code taken directly from HW1
+            for idx in range(i_begin, i_end):
+                for d in range(ndims):
+                    for j in range(nvars):  # = 1
+                        sum = 0
+                        for i in range(nface):
+                            sum += fpts[i, j, idx] * op[d, i, idx]
 
-        #*************************# 
-
-
-        # Compile the numba function
+                        grad[d, j, idx] = sum
         return self.be.make_loop(self.neles, _cal_grad)   
 
 

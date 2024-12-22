@@ -85,7 +85,7 @@ class ParabolicIntInters(BaseIntInters):
         def comm_flux(i_begin, i_end, muf, gradf, *uf):
             # Parse element views (fpts, grad)
             du    = uf[:nele]
-            for idx in range(i_begin, i_end):
+            '''for idx in range(i_begin, i_end):
                 #*************************# 
                 # Complete function
             
@@ -97,7 +97,7 @@ class ParabolicIntInters(BaseIntInters):
 
                     uf[lti][lfi, jdx, lei] =  fn[jdx]
                     uf[rti][rfi, jdx, rei] = -fn[jdx]
-
+'''
         return self.be.make_loop(self.nfpts, comm_flux)
 
 
@@ -112,17 +112,20 @@ class ParabolicIntInters(BaseIntInters):
         array = self.be.local_array()
 
         def grad_at(i_begin, i_end, gradf, *uf):
+            # print(lt)
             # Parse element views (fpts, grad)
             du    = uf[:nele]
             gradu = uf[nele:]
 
+            # shape of gradf = (dim, var, elem)
             for idx in range(i_begin, i_end):
-            #*************************# 
-            # Complete function
-            
-
-            #*************************# 
-
+                print(idx)
+                '''lt, le, lf = lt[idx], le[idx], lf[idx]
+                rt, re, rf = rt[idx], re[idx], rf[idx]'''
+                print(weight)
+                '''for j in range(nvars):
+                    for i in range(ndims):
+'''
         return self.be.make_loop(self.nfpts, grad_at)
 
 #-------------------------------------------------------------------------------#    
@@ -219,7 +222,7 @@ class ParabolicBCInters(BaseBCInters):
         def comm_flux(i_begin, i_end, muf, gradf, *uf):
             # Parse element views (fpts, grad)
             du    = uf[:nele]
-            for idx in range(i_begin, i_end):
+            #for idx in range(i_begin, i_end):
                 #*************************# 
                 # Complete function
             
@@ -246,7 +249,7 @@ class ParabolicBCInters(BaseBCInters):
             du = uf[:nele]
             gradu = uf[nele:]
 
-            for idx in range(i_begin, i_end):
+            #for idx in range(i_begin, i_end):
                #*************************# 
                # Complete function
             

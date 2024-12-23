@@ -102,7 +102,7 @@ class ParabolicIntInters(BaseIntInters):
                 fn = array(ndims)
                 for jdx in range(ndims):
                     for k in range(nfvars):
-                        fn[jdx] = -muf * (Ef[jdx]*(du[lti][lfi, jdx, lei]/inv_ef[idx])  +  gradf[jdx, k, idx] * Tf[k])
+                        fn[jdx] = -muf * (Ef[jdx]*(du[lti][lfi, jdx, lei] * inv_ef[idx])  +  gradf[jdx, k, idx] * Tf[k])
 
                     uf[lti][lfi, jdx, lei] =  fn[jdx]
                     uf[rti][rfi, jdx, rei] = -fn[jdx]
@@ -244,7 +244,7 @@ class ParabolicBCInters(BaseBCInters):
                 fn = array(ndims)
                 for jdx in range(ndims):
                     for k in range(nfvars):
-                        fn[jdx] = -muf * (Ef[jdx] * (du[lti][lfi, jdx, lei] / inv_ef[idx]) + gradf[jdx, k, idx] * Tf[k])
+                        fn[jdx] = -1 * muf * (Ef[jdx] * (du[lti][lfi, jdx, lei] * inv_ef[idx]) + gradf[jdx, k, idx] * Tf[k])
 
                     uf[lti][lfi, jdx, lei] = fn[jdx]
                 

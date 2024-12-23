@@ -127,6 +127,7 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
                         err[j, i, idx] = (self.grad[j, i, idx] - exactGrad[j, i, idx])
 
             norm = np.sqrt(np.square(err)*vol[idx])'''
+            norm = 5
             return norm
 
         return self.be.compile(run, outer=True)
@@ -153,7 +154,6 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
                 for d in range(ndims):
                     for j in range(nvars):  # = 1
                         sum = 0
-                        grad[d, j, idx] = 0.0
                         for i in range(nface):
                             sum += fpts[i, j, idx] * op[d, i, idx]
 

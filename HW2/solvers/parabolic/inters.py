@@ -131,7 +131,7 @@ class ParabolicIntInters(BaseIntInters):
                 for j in range(nvars):
                     for i in range(ndims):
                         # weight of right = 1 - weight of left
-                        gradf[i, j, idx] = weight[idx]*gradu[lti][i, j, lei] + (1 - weight[idx])*gradu[idx][i, j, rei]
+                        gradf[i, j, idx] = weight[idx]*gradu[lti][i, j, lei] + (1 - weight[idx])*gradu[lti][i, j, rei]
 
         return self.be.make_loop(self.nfpts, grad_at)
 
@@ -255,10 +255,10 @@ class ParabolicBCInters(BaseBCInters):
         nvars, ndims = self.nvars, self.ndims
         lt, le, lf = self._lidx
 
-        '''# Mangitude and direction of the connecting vector
+        # Mangitude and direction of the connecting vector
         inv_tf = self._rcp_dx                                    # This code was left here
         tf = self._dx_adj * inv_tf                               # probably unintentionally.
-        avec = self._vec_snorm/np.einsum('ij,ij->j', tf, self._vec_snorm)'''
+        avec = self._vec_snorm/np.einsum('ij,ij->j', tf, self._vec_snorm)
 
         # Stack-allocated array
         array = self.be.local_array()

@@ -108,15 +108,25 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
         vol = self._vol
         xcs = self.xc
         def run(upts):
-        #*************************#
-        # compute L2 norm in this function
-        # upts is the solution field
+            exactGrad = np.zeros((self.ndims, self.nvars, self.neles))
 
+            err = np.zeros((self.ndims, self.nvars, self.neles))
+            for idx in range(neles):
+                x = np.zeros(ndims)
+                for i in range(nvars):
+                    for j in range(ndims):
+                        x[j] = xcs[idx][j]
+                    eqn = [x[0] / math.sqrt(x[0] * x[0] + x[1] * x[1]), x[1] / math.sqrt(
+                        x[0] * x[0] + x[1] * x[1])]  # sqrt(x^2 + y^2)
+                    # eqn = [2*x[0],2*x[1]] # x^2 + y^2
+                    # eqn = [32*(x[0]**31), 32*(x[1]]**31) # x^32 + y^32
+                    # eqn = [-math.sin(x[0]**2+x[1]**2)*2*x[0],
+                    #       -math.sin(x[0]**2+x[1]**2)*2*x[1]]
+                    for j in range(ndims):
+                        exactGrad[j, i, idx] = eqn[j]
+                        err[j, i, idx] = (self.grad[j, i, idx] - exactGrad[j, i, idx])
 
-
-
-        #*************************#
-            #norm = 31
+            norm = np.sqrt(np.square(err)*vol[idx])
             return norm
 
         return self.be.compile(run, outer=True)

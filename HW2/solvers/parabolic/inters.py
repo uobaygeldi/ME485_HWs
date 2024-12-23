@@ -85,19 +85,29 @@ class ParabolicIntInters(BaseIntInters):
         def comm_flux(i_begin, i_end, muf, gradf, *uf):
             # Parse element views (fpts, grad)
             du    = uf[:nele]
-            '''for idx in range(i_begin, i_end):
-                #*************************# 
-                # Complete function
-            
-
-                #*************************# 
-                
-
-
+            for idx in range(i_begin, i_end):
+                Sf = nf[:,idx] * sf[idx]
+                muf = compute_mu()
+                lti, lei, lfi = lt[idx], le[idx], lf[idx]
+                rti, rei, rfi = rt[idx], re[idx], rf[idx]
+                Ef = array(ndims)
+                if correction == 'minimum':
+                    # Ef = (Sf dot e) * e
+                    Ef = dot(Sf, ef[:,idx],ndims) * ef[:,idx] # numba dot
+                elif correction == 'orthagonal':
+                    Ef = sf[idx] * ef[:,idx]
+                elif correction == 'over-relaxed':
+                    Ef = (sf[idx]/dot(nf[:,idx],ef[:,idx])) * ef[:, idx]
+                    # https://www.cfd-online.com/Wiki/Diffusion_term DERS NOTU YANNİS
+                Tf = Sf - Ef
+                fn = array(ndims)
+                for jdx in range(ndims):
+                    for k in range(nfvars):
+                        fn[jdx] = -muf * (Ef[jdx]*(du[lti][lfi, jdx, lei]/inv_ef[idx])  +  gradf[jdx, k, idx] * Tf[k])
 
                     uf[lti][lfi, jdx, lei] =  fn[jdx]
                     uf[rti][rfi, jdx, rei] = -fn[jdx]
-'''
+
         return self.be.make_loop(self.nfpts, comm_flux)
 
 
@@ -115,7 +125,7 @@ class ParabolicIntInters(BaseIntInters):
             # Parse element views (fpts, grad)
             du    = uf[:nele]
             gradu = uf[nele:]
-            # shape of gradf = (dim, var, elem)
+            # shape of gradf = (dim, var, interface count)
             for idx in range(i_begin, i_end):
                 lti, lei, lfi = lt[idx], le[idx], lf[idx]
                 rti, rei, rfi = rt[idx], re[idx], rf[idx]
@@ -220,12 +230,27 @@ class ParabolicBCInters(BaseBCInters):
         def comm_flux(i_begin, i_end, muf, gradf, *uf):
             # Parse element views (fpts, grad)
             du    = uf[:nele]
-            #for idx in range(i_begin, i_end):
-                #*************************# 
-                # Complete function
-            
+            # Same as int but with no right element
+            for idx in range(i_begin, i_end):
+                Sf = nf[:, idx] * sf[idx]
+                muf = compute_mu()
+                lti, lei, lfi = lt[idx], le[idx], lf[idx]
+                Ef = array(ndims)
+                if correction == 'minimum':
+                    # Ef = (Sf dot e) * e
+                    Ef = dot(Sf, ef[:, idx], ndims) * ef[:, idx]  # numba dot
+                elif correction == 'orthagonal':
+                    Ef = sf[idx] * ef[:, idx]
+                elif correction == 'over-relaxed':
+                    Ef = (sf[idx] / dot(nf[:, idx], ef[:, idx])) * ef[:, idx]
+                    # https://www.cfd-online.com/Wiki/Diffusion_term DERS NOTU YANNİS
+                Tf = Sf - Ef
+                fn = array(ndims)
+                for jdx in range(ndims):
+                    for k in range(nfvars):
+                        fn[jdx] = -muf * (Ef[jdx] * (du[lti][lfi, jdx, lei] / inv_ef[idx]) + gradf[jdx, k, idx] * Tf[k])
 
-                #*************************# 
+                    uf[lti][lfi, jdx, lei] = fn[jdx]
                 
         return self.be.make_loop(self.nfpts, comm_flux)
 
@@ -234,28 +259,23 @@ class ParabolicBCInters(BaseBCInters):
         nvars, ndims = self.nvars, self.ndims
         lt, le, lf = self._lidx
 
-        # Mangitude and direction of the connecting vector
-        inv_tf = self._rcp_dx
-        tf = self._dx_adj * inv_tf
-        avec = self._vec_snorm/np.einsum('ij,ij->j', tf, self._vec_snorm)
+        '''# Mangitude and direction of the connecting vector
+        inv_tf = self._rcp_dx                                    # This code was left here
+        tf = self._dx_adj * inv_tf                               # probably unintentionally.
+        avec = self._vec_snorm/np.einsum('ij,ij->j', tf, self._vec_snorm)'''
 
         # Stack-allocated array
         array = self.be.local_array()
 
         def grad_at(i_begin, i_end, gradf, *uf):
-            '''print("BC")
-            # Parse element views (fpts, grad)
-            du = uf[:nele]
+            du    = uf[:nele]
             gradu = uf[nele:]
-
+            # Same as int but with no right element
             for idx in range(i_begin, i_end):
-                print(du[idx])
-                print(gradu[idx])
                 lti, lei, lfi = lt[idx], le[idx], lf[idx]
-                print(lti)
                 for j in range(nvars):
                     for i in range(ndims):
-'''
+                        gradf[i, j, idx] = gradu[lti][i, j, lei]
 
         return self.be.make_loop(self.nfpts, grad_at)
 

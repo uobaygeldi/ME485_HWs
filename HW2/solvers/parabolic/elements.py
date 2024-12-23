@@ -108,7 +108,7 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
         vol = self._vol
         xcs = self.xc
         def run(upts):
-            exactGrad = np.zeros((self.ndims, self.nvars, self.neles))
+            '''exactGrad = np.zeros((self.ndims, self.nvars, self.neles))
 
             err = np.zeros((self.ndims, self.nvars, self.neles))
             for idx in range(neles):
@@ -126,7 +126,7 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
                         exactGrad[j, i, idx] = eqn[j]
                         err[j, i, idx] = (self.grad[j, i, idx] - exactGrad[j, i, idx])
 
-            norm = np.sqrt(np.square(err)*vol[idx])
+            norm = np.sqrt(np.square(err)*vol[idx])'''
             return norm
 
         return self.be.compile(run, outer=True)
@@ -153,6 +153,7 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
                 for d in range(ndims):
                     for j in range(nvars):  # = 1
                         sum = 0
+                        grad[d, j, idx] = 0.0
                         for i in range(nface):
                             sum += fpts[i, j, idx] * op[d, i, idx]
 

@@ -86,11 +86,10 @@ class ParabolicIntInters(BaseIntInters):
             # Parse element views (fpts, grad)
             du    = uf[:nele]
             for idx in range(i_begin, i_end):
-                Sf = nf[:,idx] * sf[idx]
                 muf = compute_mu()
+                Sf = nf[:,idx] * sf[idx]
                 lti, lei, lfi = lt[idx], le[idx], lf[idx]
                 rti, rei, rfi = rt[idx], re[idx], rf[idx]
-                Ef = array(ndims)
                 if correction == 'minimum':
                     # Ef = (Sf dot e) * e
                     Ef = dot(Sf, ef[:,idx],ndims) * ef[:,idx] # numba dot
@@ -104,6 +103,7 @@ class ParabolicIntInters(BaseIntInters):
                 for jdx in range(ndims):
                     for k in range(nfvars):
                         fn[jdx] = -muf * (Ef[jdx]*(du[lti][lfi, jdx, lei]/inv_ef[idx])  +  gradf[jdx, k, idx] * Tf[k])
+                        print("\n",gradf[:, k, idx])
 
                     uf[lti][lfi, jdx, lei] =  fn[jdx]
                     uf[rti][rfi, jdx, rei] = -fn[jdx]
@@ -173,8 +173,6 @@ class ParabolicBCInters(BaseBCInters):
 
         bcc['ndims'], bcc['nvars'], bcc['nfvars'] = self.ndims, self.nvars, self.nfvars
 
-
-
         bcc.update(self._const)
         
         # Get bc from `bcs.py` and compile them
@@ -235,7 +233,6 @@ class ParabolicBCInters(BaseBCInters):
                 Sf = nf[:, idx] * sf[idx]
                 muf = compute_mu()
                 lti, lei, lfi = lt[idx], le[idx], lf[idx]
-                Ef = array(ndims)
                 if correction == 'minimum':
                     # Ef = (Sf dot e) * e
                     Ef = dot(Sf, ef[:, idx], ndims) * ef[:, idx]  # numba dot

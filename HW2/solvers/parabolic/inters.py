@@ -62,7 +62,7 @@ class ParabolicIntInters(BaseIntInters):
 
 #-------------------------------------------------------------------------------#    
     def _make_flux(self, nele):
-        ndims, nfvars = self.ndims, self.nvars
+        ndims, nfvars = self.ndims, self.nfvars
         lt, le, lf = self._lidx
         rt, re, rf = self._ridx
         nf, sf = self._vec_snorm, self._mag_snorm
@@ -87,6 +87,7 @@ class ParabolicIntInters(BaseIntInters):
             du    = uf[:nele]
             for idx in range(i_begin, i_end):
                 muf = compute_mu()
+                fn = 0.0
                 Sf = nf[:,idx] * sf[idx]
                 lti, lei, lfi = lt[idx], le[idx], lf[idx]
                 rti, rei, rfi = rt[idx], re[idx], rf[idx]
@@ -101,12 +102,11 @@ class ParabolicIntInters(BaseIntInters):
                 else:
                     print("nuh uh")
                 Tf = Sf - Ef * ef[:, idx]
-                fn = 0.0
-                for jdx in range(ndims):
-                    fn = -1 * muf * (Ef * (du[lti][lfi, jdx, lei] * inv_ef[idx]) + gradf[jdx, 0, idx] * Tf[jdx])
+                for k in range(nfvars):
+                    fn = -1 * muf * (Ef * (du[lti][lfi, k, lei] * inv_ef[idx]) + dot(gradf[:, k, idx], Tf, ndims))
 
-                    uf[lti][lfi, jdx, lei] =  fn
-                    uf[rti][rfi, jdx, rei] = -fn
+                    uf[lti][lfi, k, lei] =  fn
+                    uf[rti][rfi, k, rei] = -fn
 
         return self.be.make_loop(self.nfpts, comm_flux)
 
@@ -232,6 +232,7 @@ class ParabolicBCInters(BaseBCInters):
             for idx in range(i_begin, i_end):
                 Sf = nf[:, idx] * sf[idx]
                 muf = compute_mu()
+                fn = 0.0
                 lti, lei, lfi = lt[idx], le[idx], lf[idx]
                 if correction == 'minimum':
                     # Ef = (Sf dot e) * e
@@ -242,11 +243,10 @@ class ParabolicBCInters(BaseBCInters):
                     Ef = (dot(Sf, Sf, ndims)/dot(Sf, ef[:, idx], ndims)) # * ef[:, idx]
                     # https://www.cfd-online.com/Wiki/Diffusion_term DERS NOTU YANNİS
                 Tf = Sf - Ef * ef[:, idx]
-                fn = 0.0
-                for jdx in range(ndims):
-                    fn = -1 * muf * (Ef * (du[lti][lfi, jdx, lei] * inv_ef[idx]) + gradf[jdx, 0, idx] * Tf[jdx])
+                for k in range(nfvars):
+                    fn = -1 * muf * (Ef * (du[lti][lfi, k, lei] * inv_ef[idx]) + dot(gradf[:, k, idx], Tf, ndims))
 
-                    uf[lti][lfi, jdx, lei] = fn
+                    uf[lti][lfi, k, lei] = fn
                 
         return self.be.make_loop(self.nfpts, comm_flux)
 

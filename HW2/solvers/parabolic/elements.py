@@ -154,7 +154,6 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
                 for d in range(ndims):
                     for j in range(nvars):  # = 1
                         sum = 0
-                        grad[:, j, idx] = 0.0
                         for i in range(nface):
                             sum += fpts[i, j, idx] * op[d, i, idx]
 

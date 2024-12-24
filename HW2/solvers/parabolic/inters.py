@@ -62,7 +62,7 @@ class ParabolicIntInters(BaseIntInters):
 
 #-------------------------------------------------------------------------------#    
     def _make_flux(self, nele):
-        ndims, nfvars = self.ndims, self.nfvars
+        ndims, nfvars = self.ndims, self.nvars
         lt, le, lf = self._lidx
         rt, re, rf = self._ridx
         nf, sf = self._vec_snorm, self._mag_snorm
@@ -92,20 +92,21 @@ class ParabolicIntInters(BaseIntInters):
                 rti, rei, rfi = rt[idx], re[idx], rf[idx]
                 if correction == 'minimum':
                     # Ef = (Sf dot e) * e
-                    Ef = dot(Sf, ef[:,idx],ndims) * ef[:,idx] # numba dot
+                    Ef = dot(ef[:,idx], Sf,ndims) # * ef[:,idx] # numba dot
                 elif correction == 'orthagonal':
-                    Ef = sf[idx] * ef[:,idx]
+                    Ef = sf[idx] # * ef[:,idx]
                 elif correction == 'over-relaxed':
-                    Ef = (sf[idx]/dot(nf[:,idx],ef[:,idx])) * ef[:, idx]
+                    Ef = (dot(Sf, Sf, ndims)/dot(Sf, ef[:, idx], ndims)) # * ef[:, idx]
                     # https://www.cfd-online.com/Wiki/Diffusion_term DERS NOTU YANNİS
-                Tf = Sf - Ef
-                fn = array(ndims)
+                else:
+                    print("nuh uh")
+                Tf = Sf - Ef * ef[:, idx]
+                fn = 0.0
                 for jdx in range(ndims):
-                    for k in range(nfvars):
-                        fn[jdx] = -muf * (Ef[jdx]*(du[lti][lfi, jdx, lei] * inv_ef[idx])  +  gradf[jdx, k, idx] * Tf[k])
+                    fn = -1 * muf * (Ef * (du[lti][lfi, jdx, lei] * inv_ef[idx]) + gradf[jdx, 0, idx] * Tf[jdx])
 
-                    uf[lti][lfi, jdx, lei] =  fn[jdx]
-                    uf[rti][rfi, jdx, rei] = -fn[jdx]
+                    uf[lti][lfi, jdx, lei] =  fn
+                    uf[rti][rfi, jdx, rei] = -fn
 
         return self.be.make_loop(self.nfpts, comm_flux)
 
@@ -234,19 +235,18 @@ class ParabolicBCInters(BaseBCInters):
                 lti, lei, lfi = lt[idx], le[idx], lf[idx]
                 if correction == 'minimum':
                     # Ef = (Sf dot e) * e
-                    Ef = dot(Sf, ef[:, idx], ndims) * ef[:, idx]  # numba dot
+                    Ef = dot(Sf, ef[:, idx], ndims) # * ef[:, idx]  # numba dot
                 elif correction == 'orthagonal':
-                    Ef = sf[idx] * ef[:, idx]
+                    Ef = sf[idx] # * ef[:, idx]
                 elif correction == 'over-relaxed':
-                    Ef = (sf[idx] / dot(nf[:, idx], ef[:, idx])) * ef[:, idx]
+                    Ef = (dot(Sf, Sf, ndims)/dot(Sf, ef[:, idx], ndims)) # * ef[:, idx]
                     # https://www.cfd-online.com/Wiki/Diffusion_term DERS NOTU YANNİS
-                Tf = Sf - Ef
-                fn = array(ndims)
+                Tf = Sf - Ef * ef[:, idx]
+                fn = 0.0
                 for jdx in range(ndims):
-                    for k in range(nfvars):
-                        fn[jdx] = -1 * muf * (Ef[jdx] * (du[lti][lfi, jdx, lei] * inv_ef[idx]) + gradf[jdx, k, idx] * Tf[k])
+                    fn = -1 * muf * (Ef * (du[lti][lfi, jdx, lei] * inv_ef[idx]) + gradf[jdx, 0, idx] * Tf[jdx])
 
-                    uf[lti][lfi, jdx, lei] = fn[jdx]
+                    uf[lti][lfi, jdx, lei] = fn
                 
         return self.be.make_loop(self.nfpts, comm_flux)
 

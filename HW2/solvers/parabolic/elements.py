@@ -107,27 +107,25 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
         nvars, neles, ndims = self.nvars, self.neles, self.ndims
         vol = self._vol
         xcs = self.xc
-        def run(upts):
-            '''exactGrad = np.zeros((self.ndims, self.nvars, self.neles))
 
-            err = np.zeros((self.ndims, self.nvars, self.neles))
+        '''T2 = self.cfg.get('soln-bcs-outer', 'q')
+        T1 = self.cfg.get('soln-bcs-inner', 'q')''' # there was an attempt made
+
+        def run(upts):
+            err = np.zeros((nvars, neles))
+            T2, T1 = 1, 0
+            r = [0.1 * (2 ** 0.5), 1 * (2 ** 0.5)]
             for idx in range(neles):
                 x = np.zeros(ndims)
                 for i in range(nvars):
                     for j in range(ndims):
                         x[j] = xcs[idx][j]
-                    eqn = [x[0] / math.sqrt(x[0] * x[0] + x[1] * x[1]), x[1] / math.sqrt(
-                        x[0] * x[0] + x[1] * x[1])]  # sqrt(x^2 + y^2)
-                    # eqn = [2*x[0],2*x[1]] # x^2 + y^2
-                    # eqn = [32*(x[0]**31), 32*(x[1]]**31) # x^32 + y^32
-                    # eqn = [-math.sin(x[0]**2+x[1]**2)*2*x[0],
-                    #       -math.sin(x[0]**2+x[1]**2)*2*x[1]]
-                    for j in range(ndims):
-                        exactGrad[j, i, idx] = eqn[j]
-                        err[j, i, idx] = (self.grad[j, i, idx] - exactGrad[j, i, idx])
+                    r_i = (x[0]**2 + x[1]**2)**0.5
+                    eqn = T2 - (T2-T1)*(np.log(r[1]/r_i)/np.log(r[1]/r[0])) # incropera c.2 (appendix)
+                    err[i,idx] = ((upts[i, idx] - eqn)**2)*vol[idx]
 
-            norm = np.sqrt(np.square(err)*vol[idx])'''
-            norm = 5
+                norm = np.sqrt(np.sum(err))
+
             return norm
 
         return self.be.compile(run, outer=True)

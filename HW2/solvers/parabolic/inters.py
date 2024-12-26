@@ -93,7 +93,7 @@ class ParabolicIntInters(BaseIntInters):
                 rti, rei, rfi = rt[idx], re[idx], rf[idx]
                 if correction == 'minimum':
                     # Ef = (Sf dot e) * e
-                    Ef = dot(ef[:,idx], Sf,ndims) # * ef[:,idx] # numba dot
+                    Ef = dot(ef[:,idx], Sf, ndims) # * ef[:,idx] # numba dot
                 elif correction == 'orthagonal':
                     Ef = sf[idx] # * ef[:,idx]
                 elif correction == 'over-relaxed':
@@ -132,7 +132,7 @@ class ParabolicIntInters(BaseIntInters):
                 for j in range(nvars):
                     for i in range(ndims):
                         # weight of right = 1 - weight of left
-                        gradf[i, j, idx] = weight[idx]*gradu[lti][i, j, lei] + (1 - weight[idx])*gradu[lti][i, j, rei]
+                        gradf[i, j, idx] = weight[idx]*gradu[lti][i, j, lei] + (1 - weight[idx])*gradu[rti][i, j, rei]
 
         return self.be.make_loop(self.nfpts, grad_at)
 

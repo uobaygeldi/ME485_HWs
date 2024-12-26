@@ -132,7 +132,8 @@ class ParabolicIntInters(BaseIntInters):
                 for j in range(nvars):
                     for i in range(ndims):
                         # weight of right = 1 - weight of left
-                        gradf[i, j, idx] = weight[idx]*gradu[lti][i, j, lei] + (1 - weight[idx])*gradu[rti][i, j, rei]
+                        gradf[i, j, idx] = weight[idx]*gradu[lti][i, j, lei]
+                        + (1 - weight[idx])*gradu[rti][i, j, rei]
 
         return self.be.make_loop(self.nfpts, grad_at)
 

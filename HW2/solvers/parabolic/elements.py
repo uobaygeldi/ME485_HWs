@@ -114,14 +114,26 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
         def run(upts):
             err = np.zeros((nvars, neles))
             T2, T1 = 1, 0
+            L, W = 1, 1
             r = [0.1 * (2 ** 0.5), 1 * (2 ** 0.5)]
             for idx in range(neles):
                 x = np.zeros(ndims)
                 for i in range(nvars):
                     for j in range(ndims):
                         x[j] = xcs[idx][j]
-                    r_i = (x[0]**2 + x[1]**2)**0.5
+                    # Regular Disk
+                    '''r_i = (x[0]**2 + x[1]**2)**0.5
                     eqn = T2 - (T2-T1)*(np.log(r[1]/r_i)/np.log(r[1]/r[0])) # incropera c.2 (appendix)
+                    err[i,idx] = ((upts[i, idx] - eqn)**2)*vol[idx]'''
+
+                    # Kershaw
+                    sum = 0
+                    for f in range(1,31): # set up arbitrary infinite sum
+                        top = np.sinh(f*np.pi*x[0]/L)
+                        bot = np.sinh(f*np.pi*W/L)
+                        mid = ((((-1)**(f+1))+1)/f)*np.sin(f*np.pi*-x[1]/L)
+                        sum += mid*top/bot
+                    eqn = ((2/np.pi)*sum)*(T2-T1)+T1
                     err[i,idx] = ((upts[i, idx] - eqn)**2)*vol[idx]
 
                 norm = (np.sum(err))**0.5

@@ -108,8 +108,8 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
         vol = self._vol
         xcs = self.xc
 
-        '''T2 = self.cfg.get('soln-bcs-outer', 'q')
-        T1 = self.cfg.get('soln-bcs-inner', 'q')''' # there was an attempt made
+        #T2g = self.cfg.get('soln-bcs-outer', 'q')
+        #T1g = self.cfg.get('soln-bcs-inner', 'q') # there was an attempt made
 
         def run(upts):
             err = np.zeros((nvars, neles))
@@ -124,7 +124,7 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
                     eqn = T2 - (T2-T1)*(np.log(r[1]/r_i)/np.log(r[1]/r[0])) # incropera c.2 (appendix)
                     err[i,idx] = ((upts[i, idx] - eqn)**2)*vol[idx]
 
-                norm = np.sqrt(np.sum(err))
+                norm = (np.sum(err))**0.5
 
             return norm
 

@@ -86,7 +86,7 @@ class ParabolicIntInters(BaseIntInters):
             # Parse element views (fpts, grad)
             du    = uf[:nele]
             for idx in range(i_begin, i_end):
-                muf = compute_mu()
+                mu = compute_mu()
                 fn = 0.0
                 Sf = nf[:,idx] * sf[idx]
                 lti, lei, lfi = lt[idx], le[idx], lf[idx]
@@ -103,7 +103,7 @@ class ParabolicIntInters(BaseIntInters):
                     print("nuh uh")
                 Tf = Sf - Ef * ef[:, idx]
                 for k in range(nfvars):
-                    fn = -1 * muf * (Ef * (du[lti][lfi, k, lei] * inv_ef[idx]) + dot(gradf[:, k, idx], Tf, ndims))
+                    fn = -1 * mu * (Ef * (du[lti][lfi, k, lei] * inv_ef[idx]) + dot(gradf[:, k, idx], Tf, ndims))
 
                     uf[lti][lfi, k, lei] =  fn
                     uf[rti][rfi, k, rei] = -fn
@@ -244,6 +244,9 @@ class ParabolicBCInters(BaseBCInters):
                     # https://www.cfd-online.com/Wiki/Diffusion_term DERS NOTU YANNİS
                 Tf = Sf - Ef * ef[:, idx]
                 for k in range(nfvars):
+                    ur = array(nfvars)
+                    nfi = nf[:, idx]
+                    bc(du[lti][lfi, k, lei],ur,nfi)
                     fn = -1 * muf * (Ef * (du[lti][lfi, k, lei] * inv_ef[idx]) + dot(gradf[:, k, idx], Tf, ndims))
 
                     uf[lti][lfi, k, lei] = fn

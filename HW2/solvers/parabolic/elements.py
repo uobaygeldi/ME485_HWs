@@ -125,18 +125,21 @@ class ParabolicElements(BaseElements, ParabolicFluidElements):
 
                     # Regular Disk
                     '''r_i = (x[0] ** 2 + x[1] ** 2) ** 0.5
-                    flux = - (muf*(T2-T1))/(r_i*np.log(r[1]/r[0])) # incropera c.5 (appendix) eqn is div of flux
-                    eqn = -muf*(T2-T1)*(((x[0]-x[1])*(x[0]+x[1]))/(np.log(r[1]/r[0])*r_i)+((x[1]**2-x[0]**2))/(np.log(r[1]/r[0])*r_i))
+                    flux = - (muf*(T2-T1))/(r_i*np.log(r[1]/r[0])) # incropera c.5 eqn is div of flux
+                    eqn = -muf*(T2-T1)*(((x[0]-x[1])*(x[0]+x[1]))/(np.log(r[1]/r[0])*r_i)
+                    +((x[1]**2-x[0]**2))/(np.log(r[1]/r[0])*r_i))
                     err[i,idx] = ((upts[i, idx] - eqn)**2)*vol[idx]'''
 
                     # Kershaw
-                    sum = 0
+                    sumx, sumy = 0, 0
                     for f in range(1,31): # set up arbitrary infinite sum
                         top = np.sinh(f*np.pi*x[0]/L)
                         bot = np.sinh(f*np.pi*W/L)
                         mid = ((((-1)**(f+1))+1)*f)*np.sin(f*np.pi*-x[1]/L)
-                        sum += mid*top/bot
-                    eqn = ((-4*np.pi)*sum)/(L**2)
+                        sumx +=  mid*top/bot
+                        sumy += -mid*top/bot
+                    sum = sumx + sumy
+                    eqn = ((-2*np.pi)*sum)/(L**2)
                     err[i,idx] = ((upts[i, idx] - eqn)**2)*vol[idx]
 
                 norm = (np.sum(err))**0.5

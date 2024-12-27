@@ -103,7 +103,8 @@ class ParabolicIntInters(BaseIntInters):
                     print("nuh uh")
                 Tf = Sf - Ef * ef[:, idx]
                 for k in range(nfvars):
-                    fn = -1 * mu * (Ef * (du[lti][lfi, k, lei] * inv_ef[idx]) + dot(gradf[:, k, idx], Tf, ndims))
+                    fn = -1 * mu * (Ef * (du[lti][lfi, k, lei] * inv_ef[idx])
+                                    + dot(gradf[:, k, idx], Tf, ndims))
 
                     uf[lti][lfi, k, lei] =  fn
                     uf[rti][rfi, k, rei] = -fn
@@ -243,12 +244,15 @@ class ParabolicBCInters(BaseBCInters):
                 elif correction == 'over-relaxed':
                     Ef = (dot(Sf, Sf, ndims)/dot(Sf, ef[:, idx], ndims)) # * ef[:, idx]
                     # https://www.cfd-online.com/Wiki/Diffusion_term DERS NOTU YANNİS
+                else:
+                    print("nuh uh")
                 Tf = Sf - Ef * ef[:, idx]
                 for k in range(nfvars):
                     ur = array(nfvars)
                     nfi = nf[:, idx]
                     bc(du[lti][lfi, k, lei],ur,nfi)
-                    fn = -1 * muf * (Ef * (du[lti][lfi, k, lei] * inv_ef[idx]) + dot(gradf[:, k, idx], Tf, ndims))
+                    fn = -1 * muf * (Ef * (du[lti][lfi, k, lei] * inv_ef[idx])
+                                     + dot(gradf[:, k, idx], Tf, ndims))
 
                     uf[lti][lfi, k, lei] = fn
                 

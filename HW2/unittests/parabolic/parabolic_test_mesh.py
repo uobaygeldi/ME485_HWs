@@ -97,6 +97,7 @@ gmsh.model.geo.mesh.setTransfiniteSurface(s3)
 gmsh.model.geo.mesh.setTransfiniteSurface(s4)
 gmsh.model.geo.mesh.setTransfiniteSurface(s5)
 
+#gmsh.model.geo.mesh.setRecombine(1, s1)
 gmsh.model.geo.mesh.setRecombine(2, s2)
 gmsh.model.geo.mesh.setRecombine(2, s3)
 gmsh.model.geo.mesh.setRecombine(2, s4)

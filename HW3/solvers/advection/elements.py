@@ -204,17 +204,11 @@ class AdvectionElements(BaseElements, AdvectionFluidElements):
     def _make_compute_fpts(self):
         nvars, nface = self.nvars, self.nface
         def _compute_fpts(i_begin, i_end, upts, fpts):
-            # Copy upts to fpts
+            # Code taken directly from HW1
             for idx in range(i_begin, i_end):
-                # complete the function
-
-
-
-
-
-
-
-
+                for j in range(nvars):
+                    for i in range(nface):
+                        fpts[i, j, idx] = upts[j, idx]
         return self.be.make_loop(self.neles, _compute_fpts)
 
 #-------------------------------------------------------------------------------#

@@ -136,9 +136,15 @@ class AdvectionElements(BaseElements, AdvectionFluidElements):
         # grad: gradient at cell centers, size of [ndims, nvars, nelem] 
         def _cal_barth_jespersen(i_begin, i_end, upts, grad, fext, lim):
             for i in range(i_begin, i_end):
-               # complete the function
+                for j in range(nvars):
+                    fiList = np.zeros(nface)
+                    for f in range(nface):
+                        deltaF = dot(grad[:, j, i], dxf[f, :, i], ndims)
+                        if deltaF > 0:
 
+                        elif deltaF < 0:
 
+                        else deltaF == 0:
 
 
 

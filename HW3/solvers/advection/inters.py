@@ -103,13 +103,11 @@ class AdvectionIntInters(BaseIntInters):
             for idx in range(i_begin, i_end):
                 lti, lfi, lei = lt[idx], lf[idx], le[idx]
                 rti, rfi, rei = rt[idx], rf[idx], re[idx]
-
-                #---------------------------------#  
-                # complete the function
-                #---------------------------------#  
-
-
-
+                for j in range(nvars):
+                    ul = uf[lti][lfi, j, lei]
+                    ur = uf[rti][rfi, j, rei]
+                    uext[0, idx, j, lei] = max(ul, ur)
+                    uext[1, idx, j, lei] = min(ul, ur)
 
         return self.be.make_loop(self.nfpts, compute_minmax)
 #-------------------------------------------------------------------------------#    
@@ -380,16 +378,11 @@ class AdvectionBCInters(BaseBCInters):
                 ur = array(nvars)
                 vr = array(ndims)
                 vl = array(ndims)
-                #---------------------------------#  
-                # complete the function
-                #---------------------------------#  
-
-
-
-
-
-
-
+                for j in range(nvars):
+                    ul = uf[lti][lfi, j, lei]
+                    bc(ul,ur,vl,vr)
+                    uext[0, idx, j, lei] = max(ul, ur)
+                    uext[1, idx, j, lei] = min(ul, ur)
 
         return self.be.make_loop(self.nfpts, compute_minmax)
 #-------------------------------------------------------------------------------#    

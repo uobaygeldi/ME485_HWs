@@ -138,26 +138,17 @@ class AdvectionElements(BaseElements, AdvectionFluidElements):
             for i in range(i_begin, i_end):
                 for j in range(nvars):
                     fiList = np.zeros(nface)
+                    fiMax = max(fext[0, :, j, i])
+                    fiMin = min(fext[1, :, j, i])
                     for f in range(nface):
                         deltaF = dot(grad[:, j, i], dxf[f, :, i], ndims)
                         if deltaF > 0:
-
+                            fiList[f] = min(1,(fiMax - upts[j, i])/deltaF)
                         elif deltaF < 0:
-
-                        else deltaF == 0:
-
-
-
-
-
-
-
-
-
-
-
-
-
+                            fiList[f] = min(1,(fiMin - upts[j, i])/deltaF)
+                        elif deltaF == 0:
+                            fiList[f] = 1
+                    lim[j, i] = min(fiList)
         return self.be.make_loop(self.neles, _cal_barth_jespersen)
 
 #-------------------------------------------------------------------------------#
@@ -168,7 +159,7 @@ class AdvectionElements(BaseElements, AdvectionFluidElements):
         xc = self.xc.T   
         def run(upts):
            # complete the function
-
+            norm = 5
 
 
 

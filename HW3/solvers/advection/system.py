@@ -88,7 +88,7 @@ class AdvectionSystem(BaseSystem):
 
         if is_norm:
             # Compute residual if requested
-            resid = sum(self.eles.compute_norm())
+            resid = self.eles.compute_norm()
             return resid
         else:
             return 'none'

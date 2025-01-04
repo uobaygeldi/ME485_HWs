@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from idlelib.textview import view_file
+
+from scipy.sparse import vstack
 from solvers.base import BaseIntInters, BaseBCInters, BaseMPIInters
 from backends.types import Kernel, NullKernel
 from solvers.advection.bcs import get_bc
@@ -56,19 +59,16 @@ class AdvectionIntInters(BaseIntInters):
                 fn = array(nfvars)
                 lti, lfi, lei = lt[idx], lf[idx], le[idx]
                 rti, rfi, rei = rt[idx], rf[idx], re[idx]
-                #---------------------------------#
-                # complete the function
-                #---------------------------------#  
+                nfi = nf[:, idx]
+
                 ul = uf[lti][lfi, :, lei]
                 ur = uf[rti][rfi, :, rei]
+
                 # call the numerical flux function here : i.e. upwind or rusanov
-                #flux(ul, ur, vl, vr, nfi, fn)
+                vl = vf[lti][lfi, :, lei]
+                vr = vf[rti][rfi, :, rei]
 
-
-
-
-
-
+                flux(ul, ur, vl, vr, nfi, fn)
 
                 for jdx in range(nfvars):
                     # Save it at left and right solution array
@@ -108,7 +108,6 @@ class AdvectionIntInters(BaseIntInters):
                 rti, rfi, rei = rt[idx], rf[idx], re[idx]
 
                 for j in range(nvars):
-
                     ul = uf[lti][lfi, j, lei]
                     ur = uf[rti][rfi, j, rei]
 
@@ -324,23 +323,19 @@ class AdvectionBCInters(BaseBCInters):
         bc = self.bc
 
         def comm_flux(i_begin, i_end, vf, *uf):
+
             for idx in range(i_begin, i_end):
                 fn = array(nfvars)
 
                 lti, lfi, lei = lt[idx], lf[idx], le[idx]
-                #---------------------------------#  
-                # complete the function
-                #---------------------------------#  
+                nfi = nf[:, idx]
+                ul = uf[lti][lfi, :, lei]
+                vl = vf[lti][lfi, :, lei]
+                vr = array(nfvars)
+                ur = array(nfvars)
+                bc(ul,ur,vl,vr,nfi)
 
-
-
-
-
-
-
-
-
-
+                flux(ul, ur, vl, vr, nfi, fn)
 
                 for jdx in range(nfvars):
                     # Save it at left solution array

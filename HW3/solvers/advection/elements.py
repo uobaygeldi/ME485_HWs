@@ -149,6 +149,7 @@ class AdvectionElements(BaseElements, AdvectionFluidElements):
                         elif deltaF == 0:
                             fiList[f] = 1
                     lim[j, i] = min(fiList)
+            print(lim.min())
         return self.be.make_loop(self.neles, _cal_barth_jespersen)
 
 #-------------------------------------------------------------------------------#
@@ -158,7 +159,7 @@ class AdvectionElements(BaseElements, AdvectionFluidElements):
         neles, nvars, ndims = self.neles, self.nvars, self.ndims
         xc = self.xc.T   
         def run(upts):
-           # complete the function
+            # complete the function
             norm = 5
 
 

@@ -10,7 +10,7 @@ def get_fsolver(name, be, cplargs):
     """
     docstring
     """
-    fname = re.sub('\+', 'p', name)
+    fname = re.sub(r'\+', 'p', name)
     fname = re.sub('-', '_', fname)
     flux = eval('make_' + fname)(cplargs)
     return be.compile(flux)
@@ -49,9 +49,12 @@ def make_upwind(cplargs):
         # this is u*phi*n
         flux_func(ul, vl, nf, fl)
         flux_func(ur, vr, nf, fr)
-        
-        #---------------------------------#  
-        # complete the function
-        #---------------------------------#  
+
+        if dot(vl, nf, ndims) > 0:
+            for i in range(nvars):
+                fn[i] = fl[i]
+        else:
+            for i in range(nvars):
+                fn[i] = fr[i]
 
     return fsolver

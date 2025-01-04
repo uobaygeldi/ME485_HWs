@@ -29,12 +29,10 @@ def make_rusanov(cplargs):
         # this is u*phi*n 
         flux_func(ul, vl, nf, fl)
         flux_func(ur, vr, nf, fr)
+        mLambda = max(abs(dot(vl, nf, ndims)) + eps, abs(dot(vr, nf, ndims)) + eps)
+
         for i in range(nvars):
-            alpha = max(ul[i], ur[i])
-            fn[i] = 0.5 * (fl[i] + fr[i]) - abs(alpha) * (ur[i] - ul[i])
-        #---------------------------------#  
-        # complete the function
-        #---------------------------------#  
+            fn[i] = 0.5 * (fl[i] + fr[i]) - 0.5 * mLambda * (ur[i] - ul[i])
 
     return fsolver
 

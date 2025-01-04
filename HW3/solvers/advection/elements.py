@@ -142,7 +142,7 @@ class AdvectionElements(BaseElements, AdvectionFluidElements):
                     fiMin = min(fext[1, :, j, i])
                     for f in range(nface):
                         deltaF = dot(grad[:, j, i], dxf[f, :, i], ndims)
-                        if deltaF > 0:
+                        if   deltaF > 0:
                             fiList[f] = min(1,(fiMax - upts[j, i])/deltaF)
                         elif deltaF < 0:
                             fiList[f] = min(1,(fiMin - upts[j, i])/deltaF)

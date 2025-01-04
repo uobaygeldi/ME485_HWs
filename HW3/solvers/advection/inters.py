@@ -64,10 +64,10 @@ class AdvectionIntInters(BaseIntInters):
                 ul = uf[lti][lfi, :, lei]
                 ur = uf[rti][rfi, :, rei]
 
-                # call the numerical flux function here : i.e. upwind or rusanov
                 vl = vf[lti][lfi, :, lei]
                 vr = vf[rti][rfi, :, rei]
 
+                # call the numerical flux function here : i.e. upwind or rusanov
                 flux(ul, ur, vl, vr, nfi, fn)
 
                 for jdx in range(nfvars):

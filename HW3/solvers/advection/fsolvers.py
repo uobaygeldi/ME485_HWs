@@ -45,10 +45,10 @@ def make_upwind(cplargs):
     array     = cplargs['array']
     ndims     = cplargs['ndims']
     def fsolver(ul, ur, vl, vr, nf, fn):
+
         fl = array(nvars)
         fr = array(nvars)
 
-        # this is u*phi*n
         flux_func(ul, vl, nf, fl)
         flux_func(ur, vr, nf, fr)
 

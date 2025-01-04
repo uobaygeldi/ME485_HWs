@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from scipy.signal import residue
 from solvers.base.system import BaseSystem
 from solvers.advection import AdvectionElements, AdvectionIntInters, AdvectionMPIInters,AdvectionBCInters, AdvectionVertex
 import sys
@@ -88,12 +89,11 @@ class AdvectionSystem(BaseSystem):
 
         if is_norm:
             # Compute residual if requested
-            resid = self.eles.compute_norm()
-            return resid
+            resid = sum(self.eles.compute_norm())
+            return resid, print(resid)
         else:
             return 'none'
-
-        # sys.exit()
+        #sys.exit()
 
 #-------------------------------------------------------------------------------#    
     def timestep(self, cfl, idx_in=0):

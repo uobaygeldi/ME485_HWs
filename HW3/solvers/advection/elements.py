@@ -158,13 +158,12 @@ class AdvectionElements(BaseElements, AdvectionFluidElements):
         neles, nvars, ndims = self.neles, self.nvars, self.ndims
         xc = self.xc.T   
         def run(upts):
-            # complete the function
-            norm = 5
-
-
-
-
-
+            norm = 0.0
+            for i in range(neles):
+                for j in range(nvars):
+                    if upts[0][j, i] <= 0:
+                        norm += vol[i]
+            return norm
 
         return self.be.compile(run, outer=True)
 

@@ -129,7 +129,7 @@ class AdvectionElements(BaseElements, AdvectionFluidElements):
         # Compiler arguments
         array = self.be.local_array()
         # fext: max(0)/ min(1) of the cell center values on face 
-        # size of [2,nface,nvars, nelem]
+        # size of [2, nface, nvars, nelem]
         
         # lim: limiter array: result of limiter function, size of [nvars, nelem] 
         # upts: solution at cell centers, size of [nvars, nelem] 

@@ -54,12 +54,15 @@ class AdvectionIntInters(BaseIntInters):
             for idx in range(i_begin, i_end):
                 # flux function to be filled
                 fn = array(nfvars)
-                 #---------------------------------#  
+                lti, lfi, lei = lt[idx], lf[idx], le[idx]
+                rti, rfi, rei = rt[idx], rf[idx], re[idx]
+                #---------------------------------#
                 # complete the function
                 #---------------------------------#  
-
+                ul = uf[lti][lfi, :, lei]
+                ur = uf[rti][rfi, :, rei]
                 # call the numerical flux function here : i.e. upwind or rusanov
-                #flux(ul, ur, vl, vr, nfi, fn)
+                flux(ul, ur, vl, vr, nfi, fn)
 
 
 
@@ -103,11 +106,17 @@ class AdvectionIntInters(BaseIntInters):
             for idx in range(i_begin, i_end):
                 lti, lfi, lei = lt[idx], lf[idx], le[idx]
                 rti, rfi, rei = rt[idx], rf[idx], re[idx]
+
                 for j in range(nvars):
+
                     ul = uf[lti][lfi, j, lei]
                     ur = uf[rti][rfi, j, rei]
-                    uext[0][idx, j, lei] = max(ul, ur)
-                    uext[1][idx, j, lei] = min(ul, ur)
+
+                    uext[lti][0, lfi, j, lei] = max(ul, ur)
+                    uext[lti][1, lfi, j, lei] = min(ul, ur)
+
+                    uext[rti][0, rfi, j, rei] = max(ul, ur)
+                    uext[rti][1, rfi, j, rei] = min(ul, ur)
 
         return self.be.make_loop(self.nfpts, compute_minmax)
 #-------------------------------------------------------------------------------#    
@@ -373,16 +382,20 @@ class AdvectionBCInters(BaseBCInters):
         array = self.be.local_array()
 
         def compute_minmax(i_begin, i_end, uf, *uext):
+            print("here")
             for idx in range(i_begin, i_end):
                 lti, lfi, lei = lt[idx], lf[idx], le[idx]
                 ur = array(nvars)
                 vr = array(ndims)
                 vl = array(ndims)
+
+                ul = uf[lti][lfi, :, lei]
+                bc(ul, ur, vl, vr, nf[:, idx])
+
                 for j in range(nvars):
-                    ul = uf[lti][lfi, j, lei]
-                    bc(ul,ur,vl,vr)
-                    uext[0][idx, j, lei] = max(ul, ur)
-                    uext[1][idx, j, lei] = min(ul, ur)
+
+                    uext[lti][0, lfi, j, lei] = max(ul[j], ur[j])
+                    uext[lti][1, lfi, j, lei] = min(ul[j], ur[j])
 
         return self.be.make_loop(self.nfpts, compute_minmax)
 #-------------------------------------------------------------------------------#    

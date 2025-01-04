@@ -62,7 +62,7 @@ class AdvectionIntInters(BaseIntInters):
                 ul = uf[lti][lfi, :, lei]
                 ur = uf[rti][rfi, :, rei]
                 # call the numerical flux function here : i.e. upwind or rusanov
-                flux(ul, ur, vl, vr, nfi, fn)
+                #flux(ul, ur, vl, vr, nfi, fn)
 
 
 
@@ -326,6 +326,8 @@ class AdvectionBCInters(BaseBCInters):
         def comm_flux(i_begin, i_end, vf, *uf):
             for idx in range(i_begin, i_end):
                 fn = array(nfvars)
+
+                lti, lfi, lei = lt[idx], lf[idx], le[idx]
                 #---------------------------------#  
                 # complete the function
                 #---------------------------------#  
@@ -382,7 +384,7 @@ class AdvectionBCInters(BaseBCInters):
         array = self.be.local_array()
 
         def compute_minmax(i_begin, i_end, uf, *uext):
-            print("here")
+
             for idx in range(i_begin, i_end):
                 lti, lfi, lei = lt[idx], lf[idx], le[idx]
                 ur = array(nvars)

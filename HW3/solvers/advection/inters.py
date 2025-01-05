@@ -387,7 +387,8 @@ class AdvectionBCInters(BaseBCInters):
                 vl = array(ndims)
 
                 ul = uf[lti][lfi, :, lei]
-                bc(ul, ur, vl, vr, nf[:, idx])
+                nfi = nf[:, idx]
+                bc(ul, ur, vl, vr, nfi)
 
                 for j in range(nvars):
 
